@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-enum AuthStatus { initial, loading, success, failure }
+// Đổi tên các trạng thái để phân biệt giữa đăng nhập và đăng ký
+enum AuthStatus { initial, loading, signInSuccess, signUpSuccess, failure }
 
 class AuthState extends Equatable {
   final AuthStatus status;

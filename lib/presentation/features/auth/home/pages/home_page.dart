@@ -1,6 +1,5 @@
 // file: lib/presentation/features/auth/home/pages/home_page.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qlsv/core/constants/app_colors.dart';
 import 'package:qlsv/domain/entities/user/user_entity.dart';
 import 'package:qlsv/presentation/features/activities/pages/activities_page.dart';
@@ -20,7 +19,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  // Khởi tạo các danh sách có thể thay đổi
   List<Widget> _pages = [];
   List<BottomNavigationBarItem> _navItems = [];
 
@@ -31,38 +29,46 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initializePages() {
-    // Khởi tạo danh sách bằng cách sử dụng dấu ngoặc vuông [] thay vì const []
-    _pages = [
-      const ActivitiesPage(),
-      const RegisteredActivitiesPage(),
-      const ProfilePage(),
-    ];
-    _navItems = <BottomNavigationBarItem>[
+    _pages = [];
+    _navItems = [];
+
+    _pages.add(const ActivitiesPage());
+    _navItems.add(
       const BottomNavigationBarItem(
         icon: Icon(Icons.list_alt),
         label: 'Sự kiện',
       ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.bookmark),
-        label: 'Đã đăng ký',
-      ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.person),
-        label: 'Hồ sơ',
-      ),
-    ];
+    );
 
-    // Thêm tab "Điểm danh" nếu người dùng là giảng viên hoặc admin
+    // Only add "Đã đăng ký" tab for students
+    if (widget.user.role == 'STUDENT') {
+      _pages.add(const RegisteredActivitiesPage());
+      _navItems.add(
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.bookmark),
+          label: 'Đã đăng ký',
+        ),
+      );
+    }
+
+    // Add "Điểm danh" tab for lecturers and admins
     if (widget.user.role == 'LECTURER' || widget.user.role == 'ADMIN') {
-      _pages.insert(2, const AttendanceCheckPage());
-      _navItems.insert(
-        2,
+      _pages.add(const AttendanceCheckPage());
+      _navItems.add(
         const BottomNavigationBarItem(
           icon: Icon(Icons.qr_code_scanner),
           label: 'Điểm danh',
         ),
       );
     }
+
+    _pages.add(const ProfilePage());
+    _navItems.add(
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label: 'Hồ sơ',
+      ),
+    );
   }
 
   void _onItemTapped(int index) {

@@ -22,7 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
           SignInRequestModel(username: username, password: password));
       await _storage.write(key: 'jwt_token', value: token);
       emit(state.copyWith(
-          status: AuthStatus.success, message: 'Đăng nhập thành công!'));
+          status: AuthStatus.signInSuccess, message: 'Đăng nhập thành công!'));
     } catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, message: e.toString()));
     }
@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         password: password,
       ));
-      emit(state.copyWith(status: AuthStatus.success, message: message));
+      emit(state.copyWith(status: AuthStatus.signUpSuccess, message: message));
     } catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, message: e.toString()));
     }

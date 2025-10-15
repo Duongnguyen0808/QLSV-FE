@@ -32,9 +32,11 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state.status == AuthStatus.success) {
+          // Change the status check from `success` to `signUpSuccess`
+          if (state.status == AuthStatus.signUpSuccess) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message!)));
+            // Navigate back to the login page
             Navigator.pop(context);
           } else if (state.status == AuthStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(

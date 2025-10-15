@@ -1,13 +1,12 @@
-// file: lib/presentation/features/auth/pages/sign_in_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:qlsv/domain/usecases/auth/get_me_usecase.dart';
 import 'package:qlsv/presentation/features/auth/bloc/auth_cubit.dart';
 import 'package:qlsv/presentation/features/auth/bloc/auth_state.dart';
 import 'package:qlsv/presentation/features/auth/home/pages/home_page.dart';
 import 'package:qlsv/presentation/features/auth/pages/sign_up_page.dart';
 import 'package:qlsv/core/constants/app_colors.dart';
+import 'package:get_it/get_it.dart';
+import 'package:qlsv/domain/usecases/auth/get_me_usecase.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -53,10 +52,15 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state.status == AuthStatus.success) {
+          if (state.status == AuthStatus.signInSuccess) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message!)));
-            _navigateToHomePage(); // Điều hướng sau khi đăng nhập thành công
+            // Chỉ chuyển hướng đến HomePage khi đăng nhập thành công
+            _navigateToHomePage();
+          } else if (state.status == AuthStatus.signUpSuccess) {
+            // Khi đăng ký thành công, chỉ hiển thị thông báo và ở lại trang đăng nhập
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message!)));
           } else if (state.status == AuthStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(state.message!,
