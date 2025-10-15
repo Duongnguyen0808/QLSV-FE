@@ -1,9 +1,10 @@
+// ignore_for_file: unused_field
+
 import 'package:dio/dio.dart';
 import 'package:qlsv/core/config/app_config.dart';
-import 'package:qlsv/data/models/activity/activity_model.dart';
 import 'package:qlsv/data/models/auth/sign_in_request_model.dart';
 import 'package:qlsv/data/models/auth/sign_up_request_model.dart';
-import 'package:qlsv/data/models/user/user_response_model.dart'; // Import the new UserResponseModel
+import 'package:qlsv/data/models/user/user_response_model.dart';
 
 class AuthRemoteDataSource {
   final Dio _dio;

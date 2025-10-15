@@ -1,4 +1,4 @@
-import 'package:qlsv/domain/repositories/auth_repository.dart';
+import 'package:qlsv/domain/repositories/auth/auth_repository.dart';
 
 class ChangePasswordUseCase {
   final AuthRepository _repository;

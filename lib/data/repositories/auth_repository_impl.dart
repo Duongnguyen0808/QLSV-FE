@@ -2,7 +2,7 @@ import 'package:qlsv/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:qlsv/data/models/auth/sign_in_request_model.dart';
 import 'package:qlsv/data/models/auth/sign_up_request_model.dart';
 import 'package:qlsv/domain/entities/user/user_entity.dart';
-import 'package:qlsv/domain/repositories/auth_repository.dart';
+import 'package:qlsv/domain/repositories/auth/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;

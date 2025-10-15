@@ -1,21 +1,19 @@
+// file: lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:qlsv/core/di/injection_container.dart' as di;
 import 'package:qlsv/presentation/features/activities/bloc/activities_cubit.dart';
 import 'package:qlsv/presentation/features/activities/bloc/registered_activities_cubit.dart';
+import 'package:qlsv/presentation/features/attendance_check/bloc/attendance_check_cubit.dart';
 import 'package:qlsv/presentation/features/auth/bloc/auth_cubit.dart';
 import 'package:qlsv/presentation/features/auth/pages/sign_in_page.dart';
 import 'package:qlsv/core/constants/app_colors.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
-  // Đảm bảo Flutter được khởi tạo
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Khởi tạo dữ liệu locale cho tiếng Việt
   await initializeDateFormatting('vi_VN', null);
-
   di.init();
   runApp(const MyApp());
 }
@@ -35,6 +33,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => GetIt.I<RegisteredActivitiesCubit>(),
+        ),
+        // Thêm dòng này để đăng ký AttendanceCheckCubit
+        BlocProvider(
+          create: (context) => GetIt.I<AttendanceCheckCubit>(),
         ),
       ],
       child: MaterialApp(

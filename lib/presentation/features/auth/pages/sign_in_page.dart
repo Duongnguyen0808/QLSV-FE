@@ -1,5 +1,8 @@
+// file: lib/presentation/features/auth/pages/sign_in_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:qlsv/domain/usecases/auth/get_me_usecase.dart';
 import 'package:qlsv/presentation/features/auth/bloc/auth_cubit.dart';
 import 'package:qlsv/presentation/features/auth/bloc/auth_state.dart';
 import 'package:qlsv/presentation/features/auth/home/pages/home_page.dart';
@@ -24,6 +27,27 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
+  void _navigateToHomePage() async {
+    try {
+      final user = await GetIt.I<GetMeUseCase>().call();
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage(user: user)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi tải thông tin người dùng: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +56,7 @@ class _SignInPageState extends State<SignInPage> {
           if (state.status == AuthStatus.success) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message!)));
-            // Navigate to the HomePage after successful login
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-            );
+            _navigateToHomePage(); // Điều hướng sau khi đăng nhập thành công
           } else if (state.status == AuthStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(state.message!,

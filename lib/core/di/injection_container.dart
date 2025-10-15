@@ -5,8 +5,8 @@ import 'package:qlsv/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:qlsv/data/datasources/remote/activity_remote_datasource.dart';
 import 'package:qlsv/data/repositories/auth_repository_impl.dart';
 import 'package:qlsv/data/repositories/activity_repository_impl.dart';
-import 'package:qlsv/domain/repositories/auth_repository.dart';
 import 'package:qlsv/domain/repositories/activity/activity_repository.dart';
+import 'package:qlsv/domain/repositories/auth/auth_repository.dart';
 import 'package:qlsv/domain/usecases/auth/sign_in_usecase.dart';
 import 'package:qlsv/domain/usecases/auth/sign_up_usecase.dart';
 import 'package:qlsv/domain/usecases/activities/get_all_activities_usecase.dart';
@@ -17,11 +17,14 @@ import 'package:qlsv/domain/usecases/activities/get_registered_activities_usecas
 import 'package:qlsv/presentation/features/activities/bloc/activities_cubit.dart';
 import 'package:qlsv/presentation/features/activities/bloc/registered_activities_cubit.dart';
 import 'package:qlsv/presentation/features/auth/bloc/auth_cubit.dart';
-
-// Import các file Use Case mới
 import 'package:qlsv/domain/usecases/auth/get_me_usecase.dart';
 import 'package:qlsv/domain/usecases/auth/update_profile_usecase.dart';
 import 'package:qlsv/domain/usecases/auth/change_password_usecase.dart';
+import 'package:qlsv/domain/usecases/attendance/get_activities_for_attendance_usecase.dart';
+import 'package:qlsv/domain/usecases/attendance/get_registrations_for_activity_usecase.dart';
+import 'package:qlsv/domain/usecases/attendance/update_bulk_attendance_usecase.dart';
+import 'package:qlsv/presentation/features/attendance_check/bloc/attendance_check_cubit.dart';
+import 'package:qlsv/presentation/features/attendance_check/bloc/attendance_check_detail_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -34,6 +37,12 @@ void init() {
   sl.registerFactory(() => ActivitiesCubit(sl<GetAllActivitiesUseCase>()));
   sl.registerFactory(
       () => RegisteredActivitiesCubit(sl<GetRegisteredActivitiesUseCase>()));
+  sl.registerFactory(
+      () => AttendanceCheckCubit(sl<GetActivitiesForAttendanceUseCase>()));
+  sl.registerFactory(() => AttendanceCheckDetailCubit(
+        sl<GetRegistrationsForActivityUseCase>(),
+        sl<UpdateBulkAttendanceUseCase>(),
+      ));
 
   // Use cases
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthRepository>()));
@@ -48,10 +57,15 @@ void init() {
       () => IsUserRegisteredUseCase(sl<ActivityRepository>()));
   sl.registerLazySingleton(
       () => GetRegisteredActivitiesUseCase(sl<ActivityRepository>()));
-  // Thêm các use case cho profile
   sl.registerLazySingleton(() => GetMeUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => UpdateProfileUseCase(sl<AuthRepository>()));
   sl.registerLazySingleton(() => ChangePasswordUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(
+      () => GetActivitiesForAttendanceUseCase(sl<ActivityRepository>()));
+  sl.registerLazySingleton(
+      () => GetRegistrationsForActivityUseCase(sl<ActivityRepository>()));
+  sl.registerLazySingleton(
+      () => UpdateBulkAttendanceUseCase(sl<ActivityRepository>()));
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(

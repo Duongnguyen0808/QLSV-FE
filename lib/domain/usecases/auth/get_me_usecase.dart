@@ -1,5 +1,5 @@
 import 'package:qlsv/domain/entities/user/user_entity.dart';
-import 'package:qlsv/domain/repositories/auth_repository.dart';
+import 'package:qlsv/domain/repositories/auth/auth_repository.dart';
 
 class GetMeUseCase {
   final AuthRepository _repository;

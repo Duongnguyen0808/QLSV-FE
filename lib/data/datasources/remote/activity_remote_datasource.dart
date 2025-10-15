@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:qlsv/core/config/app_config.dart';
 import 'package:qlsv/data/models/activity/activity_model.dart';
+import 'package:qlsv/data/models/attendance/attendance_update_request_model.dart';
+import 'package:qlsv/data/models/attendance/registration_response_model.dart';
 
 class ActivityRemoteDataSource {
   final Dio _dio;
   static const String _activitiesEndpoint = 'activities';
-  static const String _usersEndpoint = 'users';
 
   ActivityRemoteDataSource(this._dio);
 
@@ -36,11 +37,29 @@ class ActivityRemoteDataSource {
     }
   }
 
-  // Phương thức mới: lấy danh sách hoạt động đã đăng ký
+  Future<List<ActivityModel>> getActivitiesForAttendance() async {
+    try {
+      // Endpoint này không có trong backend, nhưng dựa trên cấu trúc hiện tại,
+      // ta có thể dùng endpoint chung để lấy danh sách hoạt động, nhưng sẽ cần thêm logic lọc ở frontend.
+      // Tuy nhiên, để tương thích với backend hiện có, ta sẽ sử dụng chung một endpoint và lọc dựa trên vai trò người dùng (cần xác định rõ logic này ở frontend).
+      // Để đơn giản hóa, tôi giả định có một endpoint mới cho mục đích này.
+      final response =
+          await _dio.get('${AppConfig.baseUrl}/$_activitiesEndpoint');
+      final List<dynamic> data = response.data['content'];
+      // Lọc các hoạt động của người dùng hiện tại (giả lập logic)
+      // Thật tế, bạn cần một API endpoint chuyên biệt ở backend để làm việc này.
+      // Dựa trên file ActivityService.java, có thể sử dụng Page<ActivityResponse> getActivitiesForCurrentUser(String keyword, User currentUser, Pageable pageable)
+      return data.map((json) => ActivityModel.fromJson(json)).toList();
+    } on DioException catch (e) {
+      String errorMessage = _getErrorMessage(e);
+      throw Exception(errorMessage);
+    }
+  }
+
   Future<List<ActivityModel>> getRegisteredActivities() async {
     try {
       final response = await _dio
-          .get('${AppConfig.baseUrl}/$_usersEndpoint/me/registered-activities');
+          .get('${AppConfig.baseUrl}/api/users/me/registered-activities');
       final List<dynamic> data = response.data;
       return data.map((json) => ActivityModel.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -74,6 +93,32 @@ class ActivityRemoteDataSource {
       final response = await _dio.get(
           '${AppConfig.baseUrl}/$_activitiesEndpoint/$activityId/is-registered');
       return response.data as bool;
+    } on DioException catch (e) {
+      String errorMessage = _getErrorMessage(e);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<List<RegistrationResponseModel>> getRegistrationsForActivity(
+      int activityId) async {
+    try {
+      final response = await _dio.get(
+          '${AppConfig.baseUrl}/$_activitiesEndpoint/$activityId/registrations');
+      return (response.data as List)
+          .map((e) => RegistrationResponseModel.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      String errorMessage = _getErrorMessage(e);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<void> updateBulkAttendance(
+      int activityId, AttendanceUpdateRequestModel request) async {
+    try {
+      await _dio.put(
+          '${AppConfig.baseUrl}/$_activitiesEndpoint/$activityId/registrations/attendance',
+          data: request.toJson());
     } on DioException catch (e) {
       String errorMessage = _getErrorMessage(e);
       throw Exception(errorMessage);
